@@ -8,51 +8,73 @@
 function Traverse(data){
   this.tree = data;
 }
-/*
- * build the methods via prototype
- * the first one is free
- * uncomment the code below, then remove this comment
- */
+
+function getValues(node, list, prop, isLeaf) {
+  if (isLeaf === null || (isLeaf && node['is_leaf']) || (!isLeaf && !node['is_leaf'])) {
+    list.push(node[prop]);
+  }
+  if (node.has_children) {
+    for (var i = 0; i < node.children.length; i++) {
+      getValues(node.children[i], list, prop, isLeaf);
+    }
+  }
+}
+
 Traverse.prototype.findAge = function() {};
 
 Traverse.prototype.getAllNames = function() {
-  function getNames(node, list) {
-    list.push(node.name);
-    if (node.has_children) {
-      for (var i = 0; i < node.children.length; i++) {
-        getNames(node.children[i], list);
-      }
-    }
-  }
   var names = [];
-  getNames(this.tree.root, names);
-  // console.log('names: ' + names);
+  getValues(this.tree.root, names, 'name', null);
   return names;
 }
 
 Traverse.prototype.getAllAges = function() {
-  // body...
+  var ages = [];
+  getValues(this.tree.root, ages, 'age', null);
+  return ages;
 };
 
 Traverse.prototype.getLeafNames = function() {
-  // body...
+  var names = [];
+  getValues(this.tree.root, names, 'name', true);
+  return names;
 };
 
 Traverse.prototype.getLeafAges = function() {
-  // body...
-};
-
-Traverse.prototype.findAllParentsAges = function() {
-  // body...
+  var ages = [];
+  getValues(this.tree.root, ages, 'age', true);
+  return ages;
 };
 
 Traverse.prototype.findAllParentsNames = function() {
-  // body...
+  var names = [];
+  getValues(this.tree.root, names, 'name', false);
+  return names;
 };
 
-Traverse.prototype.findName = function() {
-  // body...
+Traverse.prototype.findAllParentsAges = function() {
+  var ages = [];
+  getValues(this.tree.root, ages, 'age', false);
+  return ages;
 };
+
+Traverse.prototype.findName = function(str) {
+  return getNode(this.tree.root, str, null);
+};
+
+function getNode(node, str, result) {
+  if (node.name === str) {
+    return node;
+  }
+  if (node.has_children) {
+    for (var i = 0; i < node.children.length && result === null; i++) {
+      var temp = getNode(node.children[i], str);
+      if (temp !== null)
+        result = temp;
+    }
+    return result;
+  }
+}
 
 /* exports the Class Traverse */
 module.exports = Traverse;
