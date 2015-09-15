@@ -1,11 +1,10 @@
-
 /*global require, module,  __dirname */
 /*jslint node: true */
-
 'use strict';
+
 // var traverse = {};
 
-function Traverse(data){
+function Traverse(data) {
   this.tree = data;
 }
 
@@ -26,7 +25,7 @@ Traverse.prototype.getAllNames = function() {
   var names = [];
   getValues(this.tree.root, names, 'name', null);
   return names;
-}
+};
 
 Traverse.prototype.getAllAges = function() {
   var ages = [];
@@ -59,22 +58,21 @@ Traverse.prototype.findAllParentsAges = function() {
 };
 
 Traverse.prototype.findName = function(str) {
-  return getNode(this.tree.root, str, null);
-};
-
-function getNode(node, str, result) {
-  if (node.name === str) {
-    return node;
-  }
-  if (node.has_children) {
-    for (var i = 0; i < node.children.length && result === null; i++) {
-      var temp = getNode(node.children[i], str);
-      if (temp !== null)
-        result = temp;
+  function getNode(node) {
+    if (node.name === str) {
+      return node;
     }
-    return result;
+    if (node.has_children) {
+      for (var i = 0; i < node.children.length; i++) {
+        var temp = getNode(node.children[i]);
+        if (temp !== null)
+          return temp;
+      }
+    }
+    return null;
   }
-}
+  return getNode(this.tree.root);
+};
 
 /* exports the Class Traverse */
 module.exports = Traverse;
